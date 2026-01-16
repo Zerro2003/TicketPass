@@ -1,0 +1,9 @@
+com\eventpass\servlet\VerificationServlet.class
+com\eventpass\model\User.class
+com\eventpass\model\Ticket.class
+com\eventpass\servlet\LoginServlet.class
+com\eventpass\model\User$UserRole.class
+com\eventpass\model\Ticket$TicketStatus.class
+com\eventpass\servlet\BookingServlet.class
+com\eventpass\servlet\LogoutServlet.class
+com\eventpass\model\UserDatabase.class
