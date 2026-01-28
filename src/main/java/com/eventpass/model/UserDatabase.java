@@ -1,101 +1,103 @@
 package com.eventpass.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.eventpass.dao.UserDAO;
+import com.eventpass.dao.EventDAO;
+import com.eventpass.dao.TicketDAO;
+import java.util.List;
+import java.math.BigDecimal;
 
 public class UserDatabase {
     
-    private static final Map<String, User> users = new HashMap<>();
-    private static final Map<String, String[]> events = new HashMap<>();
-    
-    static {
-        users.put("john", new User(
-            "john", 
-            "password123", 
-            "John Smith", 
-            "john.smith@email.com", 
-            User.UserRole.ATTENDEE
-        ));
-        
-        users.put("sarah", new User(
-            "sarah", 
-            "password123", 
-            "Sarah Johnson", 
-            "sarah.j@email.com", 
-            User.UserRole.ATTENDEE
-        ));
-        
-        users.put("mike", new User(
-            "mike", 
-            "password123", 
-            "Mike Williams", 
-            "mike.w@email.com", 
-            User.UserRole.ATTENDEE
-        ));
-        
-        users.put("admin", new User(
-            "admin", 
-            "admin123", 
-            "Event Admin", 
-            "admin@eventpass.com", 
-            User.UserRole.ORGANIZER
-        ));
-        
-        users.put("organizer", new User(
-            "organizer", 
-            "org123", 
-            "Jane Organizer", 
-            "jane.org@eventpass.com", 
-            User.UserRole.ORGANIZER
-        ));
-        
-        events.put("evt001", new String[]{
-            "Tech Conference 2026", 
-            "February 15, 2026", 
-            "Convention Center Hall A"
-        });
-        
-        events.put("evt002", new String[]{
-            "Music Festival", 
-            "March 20, 2026", 
-            "City Park Amphitheater"
-        });
-        
-        events.put("evt003", new String[]{
-            "Business Summit", 
-            "April 10, 2026", 
-            "Grand Hotel Ballroom"
-        });
-        
-        events.put("evt004", new String[]{
-            "Art Exhibition Opening", 
-            "January 25, 2026", 
-            "Modern Art Gallery"
-        });
-    }
+    private static final UserDAO userDAO = new UserDAO();
+    private static final EventDAO eventDAO = new EventDAO();
+    private static final TicketDAO ticketDAO = new TicketDAO();
     
     public static User authenticate(String username, String password) {
-        User user = users.get(username);
-        if (user != null && user.getPassword().equals(password)) {
-            return user;
-        }
-        return null;
+        return userDAO.authenticate(username, password);
     }
     
     public static User getUser(String username) {
-        return users.get(username);
+        return userDAO.getUserByUsername(username);
+    }
+    
+    public static User getUserById(int id) {
+        return userDAO.getUserById(id);
     }
     
     public static boolean userExists(String username) {
-        return users.containsKey(username);
+        return userDAO.userExists(username);
     }
     
-    public static Map<String, String[]> getEvents() {
-        return new HashMap<>(events);
+    public static boolean emailExists(String email) {
+        return userDAO.emailExists(email);
     }
     
-    public static String[] getEvent(String eventId) {
-        return events.get(eventId);
+    public static boolean registerUser(User user) {
+        return userDAO.insertUser(user);
+    }
+    
+    public static boolean updateUser(User user) {
+        return userDAO.updateUser(user);
+    }
+    
+    public static List<Event> getEvents() {
+        return eventDAO.getAllEvents();
+    }
+    
+    public static Event getEventById(int id) {
+        return eventDAO.getEventById(id);
+    }
+    
+    public static List<Event> getEventsByOrganizer(int organizerId) {
+        return eventDAO.getEventsByOrganizer(organizerId);
+    }
+    
+    public static boolean createEvent(Event event) {
+        return eventDAO.insertEvent(event);
+    }
+    
+    public static boolean updateEvent(Event event) {
+        return eventDAO.updateEvent(event);
+    }
+    
+    public static boolean deleteEvent(int eventId) {
+        return eventDAO.deleteEvent(eventId);
+    }
+    
+    public static boolean decrementEventTickets(int eventId, int quantity) {
+        return eventDAO.decrementAvailableTickets(eventId, quantity);
+    }
+    
+    public static boolean createTicket(Ticket ticket) {
+        return ticketDAO.insertTicket(ticket);
+    }
+    
+    public static List<Ticket> getTicketsByUser(int userId) {
+        return ticketDAO.getTicketsByUser(userId);
+    }
+    
+    public static List<Ticket> getTicketsByEvent(int eventId) {
+        return ticketDAO.getTicketsByEvent(eventId);
+    }
+    
+    public static Ticket getTicketById(int ticketId) {
+        return ticketDAO.getTicketById(ticketId);
+    }
+    
+    public static boolean verifyTicket(int ticketId) {
+        return ticketDAO.verifyTicket(ticketId);
+    }
+    
+    public static boolean deleteTicket(int ticketId) {
+        return ticketDAO.deleteTicket(ticketId);
+    }
+    
+    public static BigDecimal getTotalRevenueByOrganizer(int organizerId) {
+        return ticketDAO.getTotalRevenueByOrganizer(organizerId);
+    }
+    
+    public static int countTicketsByEvent(int eventId) {
+        return ticketDAO.countTicketsByEvent(eventId);
     }
     
     public static String getTestCredentials() {
