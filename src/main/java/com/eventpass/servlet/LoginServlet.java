@@ -15,14 +15,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
-            response.sendRedirect(request.getContextPath() + "/booking.jsp");
-            return;
-        }
-
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
     
     @Override
@@ -31,42 +24,31 @@ public class LoginServlet extends HttpServlet {
         
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        
-        if (username == null || username.trim().isEmpty() || 
+
+        if (username == null || username.trim().isEmpty() ||
             password == null || password.trim().isEmpty()) {
-            
             request.setAttribute("error", "Username and password are required");
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
-        
+
         User user = UserDatabase.authenticate(username.trim(), password);
-        
+
         if (user != null) {
             HttpSession session = request.getSession(true);
             session.setAttribute("user", user);
             session.setAttribute("username", user.getUsername());
-            session.setAttribute("fullName", user.getFullName());
-            session.setAttribute("role", user.getRole().toString());
+            session.setAttribute("userRole", user.getRole().name());
             
-            response.sendRedirect(request.getContextPath() + "/booking.jsp");
-            
+            if (user.isOrganizer()) {
+                response.sendRedirect(request.getContextPath() + "/organizer");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/booking");
+            }
         } else {
             request.setAttribute("error", "Invalid username or password");
             request.setAttribute("username", username);
-            
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
-    }
-    
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        
-        response.sendRedirect(request.getContextPath() + "/login.jsp");
     }
 }
