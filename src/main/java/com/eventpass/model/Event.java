@@ -201,7 +201,7 @@ public class Event {
         if (eventTime == null) return "";
         return eventTime.format(DateTimeFormatter.ofPattern("hh:mm a"));
     }
-    
+
     @Override
     public String toString() {
         return "Event{" +
